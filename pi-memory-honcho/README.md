@@ -2,14 +2,14 @@
 
 Honcho-backed persistent memory extension for the [PI coding agent](https://github.com/badlogic/pi-mono). Persistent user context, cross-workspace memory sharing, and dialectic reasoning across sessions.
 
-> **Renamed:** this package was previously published as `pi-honcho-memory`. Use `pi install npm:pi-memory-honcho` going forward.
+> **Forked from [acsezen/pi-memory-honcho](https://github.com/acsezen/pi-memory-honcho)**. Maintained as part of [that-yolanda/pi-extensions](https://github.com/that-yolanda/pi-extensions).
 
 ## Install
 
 ```bash
 pi install npm:pi-memory-honcho
 # or from git
-pi install https://github.com/acsezen/pi-memory-honcho
+pi install https://github.com/that-yolanda/pi-extensions
 ```
 
 ## Setup
@@ -141,11 +141,11 @@ Each linked host must have `workspace` and `aiPeer` defined. Results are labeled
 ## Development
 
 ```bash
-git clone https://github.com/acsezen/pi-memory-honcho.git
-cd pi-memory-honcho
-npm install
-npm run typecheck
-npm test
+git clone https://github.com/that-yolanda/pi-extensions.git
+cd pi-extensions/pi-memory-honcho
+pnpm install
+pnpm typecheck
+pnpm test
 ```
 
 ## License
