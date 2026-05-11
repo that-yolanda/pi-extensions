@@ -15,6 +15,7 @@ Personal collection of PI (coding agent) extensions. Each extension is a self-co
 | `questionnaire/` | Tool (`questionnaire`) | Interactive single/multi-question UI with single-select and multi-select support |
 | `pi-context/` | Command (`context`) | Visualizes context window usage with a token grid and category breakdown |
 | `pi-memory-honcho/` | Tools + Commands | Honcho-backed persistent memory with dialectic reasoning, credential sanitization, cross-workspace sharing (forked from [acsezen](https://github.com/acsezen/pi-memory-honcho)) |
+| `pi-statusline/` | Footer | Persistent 2-line capsule-style status bar with model, git branch, code changes, and context usage |
 
 > **Before modifying any extension**, read its `README.md` for architecture details and design decisions. Each extension has its own documentation to avoid polluting this file with implementation specifics.
 
