@@ -2,6 +2,8 @@
 
 Persistent status footer for PI coding agent. Displays a 2-line capsule-style status bar using Gruvbox Dark palette and Powerline separators, inspired by [Starship](https://starship.rs/) prompt.
 
+<img src="assets/screenshot.png" alt="pi-statusline screenshot" width="600">
+
 ## Display
 
 ```

@@ -2,6 +2,8 @@
 
 Context window usage visualization command for PI coding agent. Shows a token grid with category breakdown.
 
+<img src="assets/screenshot.gif" alt="pi-context screenshot" width="600">
+
 ## Usage
 
 Run `/context` in PI to display the overlay. Press any key to close.

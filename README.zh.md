@@ -22,6 +22,8 @@
 
 上下文窗口可视化命令（`/context`）。以 token 网格展示各类别占用：系统提示词、工具定义、消息、可用空间、自动压缩预留。
 
+<img src="pi-context/assets/screenshot.gif" alt="pi-context 截图" width="600">
+
 ### pi-questionnaire
 
 交互式单/多问题 UI 工具。支持单选和多选模式，含标签页导航、自定义文本输入和行内自动补全。
@@ -29,6 +31,8 @@
 ### pi-statusline
 
 受 [Starship](https://starship.rs/) 启发的持久化双行胶囊状态栏。显示模型名称、思考级别、Git 分支、代码变更、工作目录和上下文使用率，采用 Powerline 分隔符和 Gruvbox Dark 配色。
+
+<img src="pi-statusline/assets/screenshot.png" alt="pi-statusline 截图" width="600">
 
 ## 快速开始
 
