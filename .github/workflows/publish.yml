@@ -32,23 +32,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Determine package filter
+      - name: Determine package
         id: pkg
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "filter=${{ inputs.package }}" >> "$GITHUB_OUTPUT"
+            name="${{ inputs.package }}"
           else
-            # Parse tag: @that-yolanda/pi-context@0.2.0 -> @that-yolanda/pi-context
-            tag="${GITHUB_REF_NAME}"
-            pkg="${tag%@*}"
-            echo "filter=${pkg}" >> "$GITHUB_OUTPUT"
+            name="${GITHUB_REF_NAME%@*}"
           fi
+          # Map @that-yolanda/pi-foo -> pi-foo
+          dir="${name#@that-yolanda/}"
+          echo "name=${name}" >> "$GITHUB_OUTPUT"
+          echo "dir=${dir}" >> "$GITHUB_OUTPUT"
 
       - name: Publish
-        run: pnpm --filter "${{ steps.pkg.outputs.filter }}" publish --access public --no-git-checks --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: npm publish --access public --provenance
