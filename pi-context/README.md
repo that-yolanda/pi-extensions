@@ -34,3 +34,7 @@ Tests for `formatTokens` are in `__tests__/utils.test.ts`.
 ```bash
 cd pi-context && pnpm test
 ```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).

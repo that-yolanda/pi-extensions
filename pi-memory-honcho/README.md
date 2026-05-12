@@ -146,6 +146,10 @@ pnpm typecheck
 pnpm test
 ```
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 MIT

@@ -46,3 +46,7 @@ Adjacent same-color capsules are merged with ` · ` separator to avoid redundant
 - `mergeSegments(segments)` — merges adjacent same-color segments
 - `collectGitStats(cwd)` — parses `git diff --shortstat HEAD` for insertion/deletion counts
 - `buildLines(width, state)` — renders both footer lines
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).

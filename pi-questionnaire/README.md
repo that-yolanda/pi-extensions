@@ -83,3 +83,7 @@ Multi-select answers include a `selections[]` array instead of a single `value`.
 ## Testing
 
 TUI-heavy code — exempt from unit testing per project conventions.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
