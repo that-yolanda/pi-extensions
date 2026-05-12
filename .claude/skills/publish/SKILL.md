@@ -58,18 +58,23 @@ If not on main or dirty working tree, stop and ask user to resolve first.
 
 ### Step 2: Analyze Changes
 
-Collect commits since last version bump for the target package:
+Use tags to find changes since the last release. Tag format: `<package>/vX.Y.Z` (e.g. `pi-context/v0.1.1`).
 
 ```bash
-# Find the last publish commit for this package
-git log --oneline --grep="chore(<package>):" | head -1
+# Find the latest tag for this package
+LAST_TAG=$(git tag -l "<package>/v*" --sort=-v:refname | head -1)
 
-# If found, show commits since then
-git log <last-commit>..HEAD --oneline -- <package>/
-
-# If not found, show all commits touching this package
-git log --oneline -- <package>/
+if [ -n "$LAST_TAG" ]; then
+  # Show commits since last tag for this package
+  git log ${LAST_TAG}..HEAD --oneline -- <package>/
+  git diff ${LAST_TAG}..HEAD --stat -- <package>/
+else
+  # First release: show all commits touching this package
+  git log --oneline -- <package>/
+fi
 ```
+
+If the package is new and has no previous tag, all commits touching its directory are considered.
 
 ### Step 3: Determine Version Bump
 
@@ -156,8 +161,12 @@ git add <package>/package.json <package>/CHANGELOG.md
 # Create release commit
 git commit -m "chore(<package>): publish <version>"
 
-# Push to main
+# Create version tag
+git tag '<package>/v<version>'
+
+# Push commit + tag
 git push origin main
+git push origin '<package>/v<version>'
 
 # Trigger CI workflow
 gh workflow run publish.yml -f package='@that-yolanda/<package>'
@@ -171,6 +180,7 @@ gh workflow run publish.yml -f package='@that-yolanda/<package>'
 Published @that-yolanda/pi-context@0.2.0
 
 Commit: abc1234 chore(pi-context): publish 0.2.0
+Tag: pi-context/v0.2.0
 CI: https://github.com/that-yolanda/pi-extensions/actions
 
 Files changed:

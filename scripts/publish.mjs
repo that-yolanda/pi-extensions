@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { resolve } from "node:path";
 
@@ -39,32 +39,37 @@ const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
 const oldVersion = pkg.version;
 
 // Bump version
-const newVersion = execSync(`npm pkg get version`, { cwd: dir }).toString().trim().replace(/"/g, "");
 execSync(`npm version ${bump} --no-git-tag-version`, { cwd: dir, stdio: "inherit" });
 const bumpedPkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
 const nextVersion = bumpedPkg.version;
 
 console.log(`\n${pkg.name} ${oldVersion} → ${nextVersion}`);
 
-// Commit
+// Check branch
 const branch = execSync("git branch --show-current").toString().trim();
 if (branch !== "main") {
 	console.error("Not on main branch. Switch to main first.");
 	process.exit(1);
 }
 
+// Commit
 execSync(`git add ${pkgPath}`);
 execSync(`git commit -m "chore(${dir}): publish ${nextVersion}"`);
 console.log("Committed.");
 
-// Push
+// Create tag
+const tag = `${dir}/v${nextVersion}`;
+execSync(`git tag '${tag}'`);
+console.log(`Tagged: ${tag}`);
+
+// Push commit + tag
 execSync("git push origin main");
+execSync(`git push origin '${tag}'`);
 console.log("Pushed to origin.");
 
 // Trigger workflow
-const fullName = pkg.name;
-execSync(`gh workflow run publish.yml -f package='${fullName}'`, {
+execSync(`gh workflow run publish.yml -f package='${pkg.name}'`, {
 	stdio: "inherit",
 });
-console.log(`\nWorkflow triggered for ${fullName}@${nextVersion}`);
+console.log(`\nWorkflow triggered for ${pkg.name}@${nextVersion}`);
 console.log("https://github.com/that-yolanda/pi-extensions/actions");
