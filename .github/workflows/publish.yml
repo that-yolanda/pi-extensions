@@ -44,6 +44,7 @@ jobs:
             dir="${GITHUB_REF_NAME%%/*}"
             name="@that-yolanda/${dir}"
           fi
+          dir="${name#@that-yolanda/}"
           echo "name=${name}" >> "$GITHUB_OUTPUT"
           echo "dir=${dir}" >> "$GITHUB_OUTPUT"
 
