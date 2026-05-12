@@ -7,9 +7,7 @@ Honcho-backed persistent memory extension for the [PI coding agent](https://gith
 ## Install
 
 ```bash
-pi install npm:pi-memory-honcho
-# or from git
-pi install https://github.com/that-yolanda/pi-extensions
+pi install npm:@that-yolanda/pi-memory-honcho
 ```
 
 ## Setup

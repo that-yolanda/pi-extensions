@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-context",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Context window usage visualization for PI coding agent.",
 	"type": "module",
 	"license": "MIT",

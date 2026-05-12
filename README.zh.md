@@ -39,11 +39,10 @@
 在 PI 中安装扩展：
 
 ```bash
-# 从 npm 安装（pi-memory-honcho）
-pi install npm:pi-memory-honcho
-
-# 从 git 安装（所有扩展）
-pi install https://github.com/that-yolanda/pi-extensions
+pi install npm:@that-yolanda/pi-memory-honcho
+pi install npm:@that-yolanda/pi-context
+pi install npm:@that-yolanda/pi-questionnaire
+pi install npm:@that-yolanda/pi-statusline
 ```
 
 各扩展的具体配置请参阅其 README。

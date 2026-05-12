@@ -39,11 +39,10 @@ Persistent 2-line capsule-style status footer inspired by [Starship](https://sta
 Install extensions into PI:
 
 ```bash
-# From npm (pi-memory-honcho)
-pi install npm:pi-memory-honcho
-
-# From git (all extensions)
-pi install https://github.com/that-yolanda/pi-extensions
+pi install npm:@that-yolanda/pi-memory-honcho
+pi install npm:@that-yolanda/pi-context
+pi install npm:@that-yolanda/pi-questionnaire
+pi install npm:@that-yolanda/pi-statusline
 ```
 
 See each extension's README for specific setup instructions.
