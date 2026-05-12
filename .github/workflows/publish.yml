@@ -32,6 +32,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: https://registry.npmjs.org
 
       - run: pnpm install --frozen-lockfile
 
@@ -43,7 +44,6 @@ jobs:
           else
             name="${GITHUB_REF_NAME%@*}"
           fi
-          # Map @that-yolanda/pi-foo -> pi-foo
           dir="${name#@that-yolanda/}"
           echo "name=${name}" >> "$GITHUB_OUTPUT"
           echo "dir=${dir}" >> "$GITHUB_OUTPUT"
