@@ -33,6 +33,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+
       - run: pnpm install --frozen-lockfile
 
       - name: Determine package
@@ -47,9 +50,6 @@ jobs:
           echo "name=${name}" >> "$GITHUB_OUTPUT"
           echo "dir=${dir}" >> "$GITHUB_OUTPUT"
 
-      - name: Configure npm registry
-        run: echo "registry=https://registry.npmjs.org" > ~/.npmrc
-
       - name: Publish
         working-directory: ${{ steps.pkg.outputs.dir }}
-        run: npm publish --access public --provenance
+        run: npm publish --access public
