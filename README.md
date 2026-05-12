@@ -4,6 +4,8 @@
 
 Personal collection of extensions for the [PI coding agent](https://github.com/badlogic/pi-mono). Persistent memory, context visualization, interactive questionnaires, and a capsule-style status bar.
 
+[![npm:pi-memory-honcho](https://img.shields.io/npm/v/@that-yolanda/pi-memory-honcho?label=pi-memory-honcho)](https://www.npmjs.com/package/@that-yolanda/pi-memory-honcho) [![npm:pi-context](https://img.shields.io/npm/v/@that-yolanda/pi-context?label=pi-context)](https://www.npmjs.com/package/@that-yolanda/pi-context) [![npm:pi-questionnaire](https://img.shields.io/npm/v/@that-yolanda/pi-questionnaire?label=pi-questionnaire)](https://www.npmjs.com/package/@that-yolanda/pi-questionnaire) [![npm:pi-statusline](https://img.shields.io/npm/v/@that-yolanda/pi-statusline?label=pi-statusline)](https://www.npmjs.com/package/@that-yolanda/pi-statusline)
+
 **[中文](README.zh.md)** | **[English](README.md)**
 
 </div>
