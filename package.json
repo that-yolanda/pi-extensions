@@ -6,7 +6,8 @@
 	"scripts": {
 		"test": "pnpm -r run test",
 		"check": "biome check .",
-		"fix": "biome check --fix --unsafe ."
+		"fix": "biome check --fix --unsafe .",
+		"publish": "node scripts/publish.mjs"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.15",

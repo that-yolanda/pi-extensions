@@ -1,13 +1,10 @@
 name: Publish to npm
 
 on:
-  push:
-    tags:
-      - "pi-*/v*"
   workflow_dispatch:
     inputs:
       package:
-        description: "Package to publish (e.g. @that-yolanda/pi-context)"
+        description: "Package to publish"
         required: true
         type: choice
         options:
@@ -38,12 +35,7 @@ jobs:
       - name: Determine package
         id: pkg
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            name="${{ inputs.package }}"
-          else
-            dir="${GITHUB_REF_NAME%%/*}"
-            name="@that-yolanda/${dir}"
-          fi
+          name="${{ inputs.package }}"
           dir="${name#@that-yolanda/}"
           echo "name=${name}" >> "$GITHUB_OUTPUT"
           echo "dir=${dir}" >> "$GITHUB_OUTPUT"
