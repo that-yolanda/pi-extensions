@@ -1,0 +1,5 @@
+packages:
+  - pi-context
+  - pi-memory-honcho
+  - pi-questionnaire
+  - pi-statusline

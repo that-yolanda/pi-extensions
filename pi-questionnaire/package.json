@@ -1,29 +1,27 @@
 {
-	"name": "@that-yolanda/pi-context",
+	"name": "@that-yolanda/pi-questionnaire",
 	"version": "0.1.0",
-	"description": "Context window usage visualization for PI coding agent.",
+	"description": "Interactive single/multi-question UI tool for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
 	"author": "that-yolanda",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/that-yolanda/pi-extensions.git",
-		"directory": "pi-context"
+		"directory": "questionnaire"
 	},
 	"keywords": [
 		"pi-package",
 		"pi",
-		"context",
-		"visualization"
+		"questionnaire",
+		"interactive"
 	],
 	"publishConfig": {
 		"access": "public"
 	},
-	"scripts": {
-		"test": "vitest run"
-	},
 	"peerDependencies": {
 		"@earendil-works/pi-coding-agent": "*",
-		"@earendil-works/pi-tui": "*"
+		"@earendil-works/pi-tui": "*",
+		"typebox": "*"
 	}
 }

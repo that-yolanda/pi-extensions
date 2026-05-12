@@ -12,7 +12,7 @@ Personal collection of PI (coding agent) extensions. Each extension is a self-co
 
 | Directory | Type | Description |
 |-----------|------|-------------|
-| `questionnaire/` | Tool (`questionnaire`) | Interactive single/multi-question UI with single-select and multi-select support |
+| `pi-questionnaire/` | Tool (`questionnaire`) | Interactive single/multi-question UI with single-select and multi-select support |
 | `pi-context/` | Command (`context`) | Visualizes context window usage with a token grid and category breakdown |
 | `pi-memory-honcho/` | Tools + Commands | Honcho-backed persistent memory with dialectic reasoning, credential sanitization, cross-workspace sharing (forked from [acsezen](https://github.com/acsezen/pi-memory-honcho)) |
 | `pi-statusline/` | Footer | Persistent 2-line capsule-style status bar with model, git branch, code changes, and context usage |
@@ -22,23 +22,31 @@ Personal collection of PI (coding agent) extensions. Each extension is a self-co
 ### Extension Structure Conventions
 
 - Each extension lives in its own directory with `index.ts` as the entry point
-- Extensions may optionally have their own `package.json`, `tsconfig.json`, and `__tests__/`
+- Each extension has its own `package.json` in the pnpm workspace; optionally `tsconfig.json` and `__tests__/`
 - All extensions export `export default function(pi: ExtensionAPI)`
 
 ## Commands
 
+This is a **pnpm workspace monorepo**. Run all commands from the repo root.
+
 ```bash
-# Lint & format (all files, project root)
-biome check .
-biome check --fix --unsafe .   # auto-fix lint + format
+# Install dependencies (workspace-aware, single lockfile at root)
+pnpm install
+
+# Lint & format (all files)
+pnpm check
+pnpm fix                        # auto-fix lint + format
+
+# Run all tests across workspace
+pnpm test
+
+# Single extension tests
+pnpm --filter pi-memory-honcho test
+pnpm --filter pi-memory-honcho test -- extensions/__tests__/pure.test.ts  # single test file
+pnpm --filter pi-context test
 
 # Type checking (per extension with tsconfig)
-cd pi-memory-honcho && pnpm typecheck
-
-# Tests (each extension with tests has its own vitest)
-cd pi-memory-honcho && pnpm test
-cd pi-memory-honcho && pnpm test -- extensions/__tests__/pure.test.ts  # single test file
-cd pi-context && pnpm test
+pnpm --filter pi-memory-honcho typecheck
 ```
 
 ## Code Style
@@ -53,7 +61,7 @@ cd pi-context && pnpm test
 ## Code Quality
 
 - **Biome** is configured at repo root (`biome.json`) for all linting and formatting
-- After any code change, run `biome check --fix --unsafe .` before committing
+- After any code change, run `pnpm fix` before committing
 - Fix all errors reported by Biome — warnings are acceptable
 - TypeScript strict mode is enabled — ensure type safety in all new code
 

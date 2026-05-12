@@ -168,7 +168,7 @@ export default function honchoMemory(pi: ExtensionAPI): void {
 		const recallMode = getRecallMode();
 		if (recallMode === "tools") return;
 		const handles = getHandles();
-		if (!handles || !handles.session) return;
+		if (!handles?.session) return;
 
 		turnCount++;
 

@@ -1,26 +1,23 @@
 {
-	"name": "@that-yolanda/pi-context",
+	"name": "@that-yolanda/pi-statusline",
 	"version": "0.1.0",
-	"description": "Context window usage visualization for PI coding agent.",
+	"description": "Capsule-style persistent status footer for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
 	"author": "that-yolanda",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/that-yolanda/pi-extensions.git",
-		"directory": "pi-context"
+		"directory": "pi-statusline"
 	},
 	"keywords": [
 		"pi-package",
 		"pi",
-		"context",
-		"visualization"
+		"statusline",
+		"status-bar"
 	],
 	"publishConfig": {
 		"access": "public"
-	},
-	"scripts": {
-		"test": "vitest run"
 	},
 	"peerDependencies": {
 		"@earendil-works/pi-coding-agent": "*",

@@ -54,7 +54,8 @@ interface Segment {
 
 function buildPill(segments: Segment[]): string {
 	if (segments.length === 0) return "";
-	let out = pillOpen(segments[0].bg) + pillBody(segments[0].bg, segments[0].text);
+	let out =
+		pillOpen(segments[0].bg) + pillBody(segments[0].bg, segments[0].text);
 	for (let i = 1; i < segments.length; i++) {
 		out += pillArrow(segments[i - 1].bg, segments[i].bg);
 		out += pillBody(segments[i].bg, segments[i].text);
@@ -162,12 +163,10 @@ function buildLines(width: number, s: StatusState): string[] {
 	// Line 1: session info capsules
 	const line1Segs: Segment[] = [];
 
-	if (s.model)
-		line1Segs.push({ bg: C.orange, text: `❖ ${s.model}` });
+	if (s.model) line1Segs.push({ bg: C.orange, text: `❖ ${s.model}` });
 	if (s.thinkingLevel)
 		line1Segs.push({ bg: C.purple, text: `○ ${s.thinkingLevel}` });
-	if (s.gitBranch)
-		line1Segs.push({ bg: C.aqua, text: ` ${s.gitBranch}` });
+	if (s.gitBranch) line1Segs.push({ bg: C.aqua, text: ` ${s.gitBranch}` });
 	if (s.gitAdded > 0 || s.gitRemoved > 0) {
 		const parts: string[] = [];
 		if (s.gitAdded > 0) parts.push(`+${s.gitAdded}`);
@@ -176,16 +175,14 @@ function buildLines(width: number, s: StatusState): string[] {
 	}
 	if (s.cwd) line1Segs.push({ bg: C.yellow, text: shortenPath(s.cwd) });
 
-	const line1 =
-		truncateToWidth(buildPill(mergeSegments(line1Segs)), width) + R;
+	const line1 = truncateToWidth(buildPill(mergeSegments(line1Segs)), width) + R;
 
 	// Line 2: context usage capsules
 	let line2: string;
 	if (s.contextPercent != null && s.contextWindow > 0) {
 		const pct = s.contextPercent;
 		const remain = Math.max(0, 100 - pct);
-		const usageColor =
-			pct < 50 ? C.green : pct < 80 ? C.yellow : C.red;
+		const usageColor = pct < 50 ? C.green : pct < 80 ? C.yellow : C.red;
 
 		const barW = 10;
 		const filled = Math.max(0, Math.round((pct / 100) * barW));
@@ -207,8 +204,7 @@ function buildLines(width: number, s: StatusState): string[] {
 			},
 		];
 
-		line2 =
-			truncateToWidth(buildPill(mergeSegments(line2Segs)), width) + R;
+		line2 = truncateToWidth(buildPill(mergeSegments(line2Segs)), width) + R;
 	} else {
 		line2 = `${fg(C.bg3)}Context data not available yet${R}`;
 	}

@@ -19,6 +19,11 @@ coverage/
 
 # Package locks (use pnpm)
 package-lock.json
+bun.lockb
 
 # PI-specific
 .omx/
+
+# Claude Code
+.claude/
+skills-lock.json
