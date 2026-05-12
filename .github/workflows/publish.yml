@@ -3,7 +3,7 @@ name: Publish to npm
 on:
   push:
     tags:
-      - "@that-yolanda/*@*"
+      - "pi-*@*"
   workflow_dispatch:
     inputs:
       package:
@@ -44,9 +44,9 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             name="${{ inputs.package }}"
           else
-            name="${GITHUB_REF_NAME%@*}"
+            dir="${GITHUB_REF_NAME%@*}"
+            name="@that-yolanda/${dir}"
           fi
-          dir="${name#@that-yolanda/}"
           echo "name=${name}" >> "$GITHUB_OUTPUT"
           echo "dir=${dir}" >> "$GITHUB_OUTPUT"
 
