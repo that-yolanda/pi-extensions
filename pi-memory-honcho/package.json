@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-memory-honcho",
-	"version": "0.4.2",
+	"version": "0.4.3",
 	"description": "Honcho-backed persistent memory extension for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
@@ -12,6 +12,9 @@
 		"type": "git",
 		"url": "git+https://github.com/that-yolanda/pi-extensions.git",
 		"directory": "pi-memory-honcho"
+	},
+	"bugs": {
+		"url": "https://github.com/that-yolanda/pi-extensions/issues"
 	},
 	"homepage": "https://github.com/that-yolanda/pi-extensions#readme",
 	"keywords": [

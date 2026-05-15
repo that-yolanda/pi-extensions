@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 (2026-05-15)
+
+- Use absolute GitHub raw URLs for images in README
+- Add `bugs` field to package.json
+
 ## 0.2.0 (2026-05-15)
 
 - Add Session Token Usage breakdown (input miss, cache hit rate, output)

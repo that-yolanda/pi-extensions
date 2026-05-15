@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-questionnaire",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Interactive single/multi-question UI tool for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
@@ -9,6 +9,9 @@
 		"type": "git",
 		"url": "git+https://github.com/that-yolanda/pi-extensions.git",
 		"directory": "questionnaire"
+	},
+	"bugs": {
+		"url": "https://github.com/that-yolanda/pi-extensions/issues"
 	},
 	"keywords": [
 		"pi-package",

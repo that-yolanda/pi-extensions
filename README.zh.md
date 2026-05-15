@@ -24,7 +24,7 @@
 
 上下文窗口可视化命令（`/context`）。以 token 网格展示各类别占用（系统提示词、工具定义、消息、可用空间、自动压缩预留）及会话 token 用量（input、cache 命中率、output）。
 
-<img src="pi-context/assets/screenshot.gif" alt="pi-context 截图" width="600">
+<img src="https://raw.githubusercontent.com/that-yolanda/pi-extensions/main/pi-context/assets/screenshot.gif" alt="pi-context 截图" width="600">
 
 ### pi-questionnaire
 
@@ -34,7 +34,7 @@
 
 受 [Starship](https://starship.rs/) 启发的持久化双行胶囊状态栏。显示 provider/模型、思考级别、Git 分支、代码变更、工作目录、token 用量（input/cache/output）及上下文可用率，采用循环配色的 Powerline 分隔符。
 
-<img src="pi-statusline/assets/screenshot.png" alt="pi-statusline 截图" width="600">
+<img src="https://raw.githubusercontent.com/that-yolanda/pi-extensions/main/pi-statusline/assets/screenshot.png" alt="pi-statusline 截图" width="600">
 
 ## 快速开始
 

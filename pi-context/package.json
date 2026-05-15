@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-context",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Context window usage visualization for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
@@ -9,6 +9,9 @@
 		"type": "git",
 		"url": "git+https://github.com/that-yolanda/pi-extensions.git",
 		"directory": "pi-context"
+	},
+	"bugs": {
+		"url": "https://github.com/that-yolanda/pi-extensions/issues"
 	},
 	"keywords": [
 		"pi-package",

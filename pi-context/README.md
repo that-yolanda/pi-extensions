@@ -2,7 +2,7 @@
 
 Context window usage visualization command for PI coding agent. Shows a token grid with category breakdown.
 
-<img src="assets/screenshot.gif" alt="pi-context screenshot" width="600">
+<img src="https://raw.githubusercontent.com/that-yolanda/pi-extensions/main/pi-context/assets/screenshot.gif" alt="pi-context screenshot" width="600">
 
 ## Usage
 
