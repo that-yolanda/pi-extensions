@@ -8,8 +8,9 @@ type RGB = readonly [number, number, number];
 
 const C = {
 	fg0: [251, 241, 199] as RGB, // '#fbf1c7'
-	bg1: [60, 56, 54] as RGB, // '#3c3836'
-	bg3: [102, 92, 84] as RGB, // '#665c54'
+	bg1: [151, 138, 128] as RGB, // '#978A80'
+	bg2: [102, 92, 84] as RGB, // '#665c54'
+	bg3: [60, 56, 54] as RGB, // '#3c3836'
 	blue: [69, 133, 136] as RGB, // '#458588'
 	aqua: [104, 157, 106] as RGB, // '#689d6a'
 	green: [152, 151, 26] as RGB, // '#98971a'
@@ -18,6 +19,13 @@ const C = {
 	red: [204, 36, 29] as RGB, // '#cc241d'
 	yellow: [215, 153, 33] as RGB, // '#d79921'
 };
+
+// Segment color sequence: orange → yellow → aqua → blue → bg2 → bg3
+const SEG_COLORS = [C.orange, C.yellow, C.aqua, C.blue, C.bg2, C.bg3] as const;
+
+function segColor(idx: number): RGB {
+	return SEG_COLORS[idx % SEG_COLORS.length];
+}
 
 const R = "\x1b[0m";
 
@@ -32,11 +40,11 @@ function bg(c: RGB): string {
 // --- Capsule builders (Powerline style) ---
 
 function pillOpen(c: RGB): string {
-	return `${fg(c)}${R}`;
+	return `${fg(c)}\u{E0B6}${R}`;
 }
 
 function pillClose(c: RGB): string {
-	return `${fg(c)}${R}`;
+	return `${fg(c)}\u{E0B4}${R}`;
 }
 
 function pillBody(c: RGB, text: string): string {
@@ -44,7 +52,7 @@ function pillBody(c: RGB, text: string): string {
 }
 
 function pillArrow(prev: RGB, next: RGB): string {
-	return `${bg(next)}${fg(prev)}${R}`;
+	return `${bg(next)}${fg(prev)}\u{E0B0}${R}`;
 }
 
 interface Segment {
@@ -62,26 +70,6 @@ function buildPill(segments: Segment[]): string {
 	}
 	out += pillClose(segments[segments.length - 1].bg);
 	return out;
-}
-
-// Merge adjacent same-color segments with " · " separator
-function mergeSegments(segments: Segment[]): Segment[] {
-	if (segments.length <= 1) return segments;
-	const result: Segment[] = [{ ...segments[0] }];
-	for (let i = 1; i < segments.length; i++) {
-		const prev = result[result.length - 1];
-		const cur = segments[i];
-		if (
-			prev.bg[0] === cur.bg[0] &&
-			prev.bg[1] === cur.bg[1] &&
-			prev.bg[2] === cur.bg[2]
-		) {
-			prev.text += ` · ${cur.text}`;
-		} else {
-			result.push({ ...cur });
-		}
-	}
-	return result;
 }
 
 // --- Data helpers ---
@@ -116,36 +104,11 @@ function fmtTokens(n: number): string {
 	return `${n}`;
 }
 
-function thinkingLabel(raw: string | undefined): string {
-	if (!raw) return "";
-	const map: Record<string, string> = {
-		off: "",
-		minimal: "min",
-		low: "low",
-		medium: "med",
-		high: "high",
-		extended: "xhigh",
-	};
-	return map[raw.toLowerCase()] || raw;
-}
-
-function extractThinking(model: unknown): string {
-	const cfg = (model as { config?: Record<string, unknown> })?.config;
-	if (!cfg) return "";
-	if (typeof cfg.thinkingLevel === "string")
-		return thinkingLabel(cfg.thinkingLevel);
-	if (cfg.thinking) {
-		const t = cfg.thinking;
-		return thinkingLabel(
-			typeof t === "string" ? t : (t as { level?: string })?.level,
-		);
-	}
-	return "";
-}
 
 // --- State ---
 
 interface StatusState {
+	provider: string;
 	model: string;
 	thinkingLevel: string;
 	contextPercent: number | null;
@@ -155,56 +118,96 @@ interface StatusState {
 	gitAdded: number;
 	gitRemoved: number;
 	cwd: string;
+	totalInput: number;
+	totalOutput: number;
+	totalCacheRead: number;
+	totalCacheWrite: number;
 }
 
 // --- Render ---
 
 function buildLines(width: number, s: StatusState): string[] {
-	// Line 1: session info capsules
+	// Line 1: session info — orange / yellow / aqua / blue / bg2 / bg3
 	const line1Segs: Segment[] = [];
+	let ci = 0;
 
-	if (s.model) line1Segs.push({ bg: C.orange, text: `❖ ${s.model}` });
-	if (s.thinkingLevel)
-		line1Segs.push({ bg: C.purple, text: `○ ${s.thinkingLevel}` });
-	if (s.gitBranch) line1Segs.push({ bg: C.aqua, text: ` ${s.gitBranch}` });
+	if (s.model) {
+		line1Segs.push({
+			bg: segColor(ci++),
+			text: s.provider ? `❖ ${s.provider}/${s.model}` : `❖ ${s.model}`,
+		});
+	}
+	if (s.thinkingLevel) {
+		line1Segs.push({
+			bg: segColor(ci++),
+			text: ` ${s.thinkingLevel}`,
+		});
+	}
+	if (s.gitBranch) {
+		line1Segs.push({
+			bg: segColor(ci++),
+			text: ` ${s.gitBranch}`,
+		});
+	}
 	if (s.gitAdded > 0 || s.gitRemoved > 0) {
 		const parts: string[] = [];
-		if (s.gitAdded > 0) parts.push(`+${s.gitAdded}`);
-		if (s.gitRemoved > 0) parts.push(`-${s.gitRemoved}`);
-		line1Segs.push({ bg: C.blue, text: parts.join(" ") });
+		if (s.gitAdded > 0) parts.push(`+ ${s.gitAdded}`);
+		if (s.gitRemoved > 0) parts.push(`- ${s.gitRemoved}`);
+		line1Segs.push({ bg: segColor(ci++), text: parts.join(" ") });
 	}
-	if (s.cwd) line1Segs.push({ bg: C.yellow, text: shortenPath(s.cwd) });
+	if (s.cwd) {
+		line1Segs.push({
+			bg: segColor(ci++),
+			text: `  ${shortenPath(s.cwd)}`,
+		});
+	}
 
-	const line1 = truncateToWidth(buildPill(mergeSegments(line1Segs)), width) + R;
+	const line1 = truncateToWidth(buildPill(line1Segs), width) + R;
 
-	// Line 2: context usage capsules
+	// Line 2: context + tokens — orange / yellow / aqua / blue
 	let line2: string;
 	if (s.contextPercent != null && s.contextWindow > 0) {
 		const pct = s.contextPercent;
 		const remain = Math.max(0, 100 - pct);
-		const usageColor = pct < 50 ? C.green : pct < 80 ? C.yellow : C.red;
 
 		const barW = 10;
-		const filled = Math.max(0, Math.round((pct / 100) * barW));
-		const empty = barW - filled;
-		const bar = "█".repeat(filled) + "░".repeat(empty);
+		const usedBlocks = Math.max(0, Math.round((pct / 100) * barW));
+		const freeBlocks = barW - usedBlocks;
 
-		const line2Segs: Segment[] = [
-			{
-				bg: usageColor,
-				text: `${pct.toFixed(1)}% ${bar}`,
-			},
-			{
-				bg: C.bg3,
-				text: `${fmtTokens(s.contextTokens ?? 0)}/${fmtTokens(s.contextWindow)}`,
-			},
-			{
-				bg: C.bg3,
-				text: `${remain.toFixed(1)}% free`,
-			},
-		];
+		const line2Segs: Segment[] = [];
 
-		line2 = truncateToWidth(buildPill(mergeSegments(line2Segs)), width) + R;
+		// Segment 1 (orange): context window size
+		line2Segs.push({
+			bg: segColor(0),
+			text: `󰞕 ${fmtTokens(s.contextWindow)}`,
+		});
+
+		// Segment 2 (yellow): input breakdown
+		if (s.totalInput > 0 || s.totalCacheRead > 0) {
+			const totalIn = s.totalInput + s.totalCacheRead;
+			const cacheRate =
+				totalIn > 0 ? ((s.totalCacheRead / totalIn) * 100).toFixed(0) : "0";
+			line2Segs.push({
+				bg: segColor(1),
+				text: `↑ ${fmtTokens(totalIn)} → ${fmtTokens(s.totalInput)} / ${fmtTokens(s.totalCacheRead)} ${cacheRate}%`,
+			});
+		}
+
+		// Segment 3 (aqua): output
+		if (s.totalOutput > 0) {
+			line2Segs.push({
+				bg: segColor(2),
+				text: `↓ ${fmtTokens(s.totalOutput)}`,
+			});
+		}
+
+		// Segment 4 (bg3): available bar + free %
+		line2Segs.push({
+			bg: C.bg3,
+			text: `${fg(C.bg2)}${"█".repeat(usedBlocks)}${fg(C.bg1)}${"░".repeat(freeBlocks)}${fg(C.fg0)} ${remain.toFixed(1)}% free`,
+		});
+
+		line2 = truncateToWidth(buildPill(line2Segs), width) + R;
 	} else {
 		line2 = `${fg(C.bg3)}Context data not available yet${R}`;
 	}
@@ -216,6 +219,7 @@ function buildLines(width: number, s: StatusState): string[] {
 
 export default function (pi: ExtensionAPI) {
 	const state: StatusState = {
+		provider: "",
 		model: "",
 		thinkingLevel: "",
 		contextPercent: null,
@@ -225,6 +229,10 @@ export default function (pi: ExtensionAPI) {
 		gitAdded: 0,
 		gitRemoved: 0,
 		cwd: "",
+		totalInput: 0,
+		totalOutput: 0,
+		totalCacheRead: 0,
+		totalCacheWrite: 0,
 	};
 
 	let tui: { requestRender(): void } | null = null;
@@ -257,16 +265,64 @@ export default function (pi: ExtensionAPI) {
 		state.gitRemoved = stats.removed;
 	}
 
+	function refreshUsage(ctx: {
+		sessionManager: {
+			getBranch(): Array<{
+				type: string;
+				thinkingLevel?: string;
+				message?: {
+					role: string;
+					usage?: {
+						input: number;
+						output: number;
+						cacheRead: number;
+						cacheWrite: number;
+					};
+				};
+			}>;
+		};
+	}) {
+		let input = 0;
+		let output = 0;
+		let cacheRead = 0;
+		let cacheWrite = 0;
+		let lastThinking = "";
+		for (const e of ctx.sessionManager.getBranch()) {
+			if (e.type === "message" && e.message?.role === "assistant") {
+				const u = e.message.usage;
+				if (u) {
+					input += u.input;
+					output += u.output;
+					cacheRead += u.cacheRead;
+					cacheWrite += u.cacheWrite;
+				}
+			}
+			if (e.type === "thinking_level_change") {
+				lastThinking = e.thinkingLevel || "";
+			}
+		}
+		state.totalInput = input;
+		state.totalOutput = output;
+		state.totalCacheRead = cacheRead;
+		state.totalCacheWrite = cacheWrite;
+		if (lastThinking) {
+			state.thinkingLevel = lastThinking;
+		}
+	}
+
 	function requestRender() {
 		tui?.requestRender();
 	}
 
 	pi.on("session_start", async (_event, ctx) => {
 		state.cwd = ctx.cwd;
+		state.provider =
+			(ctx.model as { provider?: string } | undefined)?.provider || "";
 		state.model = ctx.model?.id || "";
-		state.thinkingLevel = extractThinking(ctx.model);
+		state.thinkingLevel = "";
 		refreshGit(ctx.cwd);
 		await refreshContext(ctx);
+		refreshUsage(ctx);
 
 		ctx.ui.setFooter((_tui, _theme, footerData) => {
 			tui = _tui;
@@ -290,9 +346,15 @@ export default function (pi: ExtensionAPI) {
 		});
 	});
 
-	pi.on("model_select", async (event) => {
+	pi.on("model_select", async (event, ctx) => {
+		state.provider = event.model.provider || "";
 		state.model = event.model?.id || "";
-		state.thinkingLevel = extractThinking(event.model);
+		await refreshContext(ctx);
+		requestRender();
+	});
+
+	pi.on("thinking_level_select", async (event) => {
+		state.thinkingLevel = event.level;
 		requestRender();
 	});
 
@@ -304,6 +366,7 @@ export default function (pi: ExtensionAPI) {
 	pi.on("turn_end", async (_event, ctx) => {
 		await refreshContext(ctx);
 		refreshGit(ctx.cwd);
+		refreshUsage(ctx);
 		requestRender();
 	});
 }

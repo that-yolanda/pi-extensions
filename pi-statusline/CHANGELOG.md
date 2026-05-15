@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 (2026-05-15)
+
+- Redesign segment colors: cycle through orange → yellow → green → blue instead of fixed per-segment colors
+- Show `provider/model` format when provider is available
+- Add token usage display: input (miss + cache hit rate), output on line 2
+- Add `thinking_level_select` event handler for real-time thinking level updates
+- Add `refreshUsage()` to aggregate session-wide token metrics from conversation branch
+- Remove `mergeSegments()` and `extractThinking()` functions
+- Replace literal Powerline chars with Unicode escape sequences
+- Add `pi.extensions` entry point config to package.json
+
 ## 0.1.2 (2026-05-12)
 
 - Add screenshot to README

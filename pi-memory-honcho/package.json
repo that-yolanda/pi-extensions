@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-memory-honcho",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "Honcho-backed persistent memory extension for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
@@ -38,5 +38,9 @@
 		"@earendil-works/pi-coding-agent": "*",
 		"@sinclair/typebox": "*"
 	},
-	"pi": {}
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
 }

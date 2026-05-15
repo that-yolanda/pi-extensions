@@ -22,7 +22,7 @@ Honcho-backed persistent memory with dialectic reasoning. Stores user preference
 
 ### pi-context
 
-Context window visualization via the `/context` command. Renders a token grid with category breakdown (system prompt, tool definitions, messages, available space, auto-compact reserve).
+Context window visualization via the `/context` command. Renders a token grid with category breakdown and session token usage (input, cache hit rate, output).
 
 <img src="pi-context/assets/screenshot.gif" alt="pi-context screenshot" width="600">
 
@@ -32,7 +32,7 @@ Interactive single/multi-question UI tool. Supports single-select and multi-sele
 
 ### pi-statusline
 
-Persistent 2-line capsule-style status footer inspired by [Starship](https://starship.rs/). Shows model name, thinking level, git branch, code changes, working directory, and context usage with Powerline separators using the Gruvbox Dark palette.
+Persistent 2-line capsule-style status footer inspired by [Starship](https://starship.rs/). Shows provider/model, thinking level, git branch, code changes, working directory, token usage (input/cache/output), and context availability with cycling Powerline segments.
 
 <img src="pi-statusline/assets/screenshot.png" alt="pi-statusline screenshot" width="600">
 

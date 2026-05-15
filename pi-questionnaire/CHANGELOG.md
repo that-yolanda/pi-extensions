@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 (2026-05-15)
+
+- Add `pi.extensions` entry point config to package.json
+
 ## 0.1.1 (2026-05-12)
 
 - Update install command to use `@that-yolanda` npm scope

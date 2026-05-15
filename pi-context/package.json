@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-context",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"description": "Context window usage visualization for PI coding agent.",
 	"type": "module",
 	"license": "MIT",
@@ -25,5 +25,10 @@
 	"peerDependencies": {
 		"@earendil-works/pi-coding-agent": "*",
 		"@earendil-works/pi-tui": "*"
+	},
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
 	}
 }

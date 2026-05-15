@@ -34,11 +34,11 @@ interface CategoryConfig {
 }
 
 const CATEGORY_CONFIG: Record<string, CategoryConfig> = {
-	systemPrompt: { label: "System Prompt", color: "muted", symbol: "⛁" },
-	systemTools: { label: "System Tools", color: "muted", symbol: "⛁" },
-	toolCall: { label: "Tool Call", color: "warning", symbol: "⛁" },
-	messages: { label: "Messages", color: "accent", symbol: "⛁" },
-	other: { label: "Other", color: "dim", symbol: "⛁" },
+	systemPrompt: { label: "System Prompt", color: "muted", symbol: "⛝" },
+	systemTools: { label: "System Tools", color: "muted", symbol: "⛝" },
+	toolCall: { label: "Tool Call", color: "warning", symbol: "⛝" },
+	messages: { label: "Messages", color: "accent", symbol: "⛝" },
+	other: { label: "Other", color: "dim", symbol: "⛝" },
 	available: { label: "Available", color: "text", symbol: "⛶" },
 	autoCompact: { label: "Auto Compact", color: "dim", symbol: "⛝" },
 };
@@ -66,6 +66,10 @@ export default function (pi: ExtensionAPI) {
 			let msgTokensRaw = 0;
 			let toolUseTokensRaw = 0;
 			let toolResultTokensRaw = 0;
+			let sessionInput = 0;
+			let sessionOutput = 0;
+			let sessionCacheRead = 0;
+			let _sessionCacheWrite = 0;
 
 			for (const entry of branch) {
 				if (entry.type === "message") {
@@ -86,6 +90,12 @@ export default function (pi: ExtensionAPI) {
 								if (p.type === "toolCall")
 									toolUseTokensRaw += estimateTokens(JSON.stringify(p));
 							}
+						}
+						if (m.usage) {
+							sessionInput += m.usage.input;
+							sessionOutput += m.usage.output;
+							sessionCacheRead += m.usage.cacheRead;
+							_sessionCacheWrite += m.usage.cacheWrite;
 						}
 					} else if (m.role === "toolResult") {
 						if (Array.isArray(m.content)) {
@@ -150,10 +160,22 @@ export default function (pi: ExtensionAPI) {
 						);
 					} else {
 						type CategoryKey = keyof typeof CATEGORY_CONFIG;
-						const categories: { key: CategoryKey; value: number }[] = [
-							{ key: "systemPrompt", value: systemTokens },
-							{ key: "systemTools", value: toolDefTokens },
-							{ key: "toolCall", value: toolUseTokens + toolResultTokens },
+						const categories: {
+							key: CategoryKey;
+							value: number;
+						}[] = [
+							{
+								key: "systemPrompt",
+								value: systemTokens,
+							},
+							{
+								key: "systemTools",
+								value: toolDefTokens,
+							},
+							{
+								key: "toolCall",
+								value: toolUseTokens + toolResultTokens,
+							},
 							{ key: "messages", value: msgTokens },
 						];
 
@@ -167,25 +189,37 @@ export default function (pi: ExtensionAPI) {
 									toolResultTokens),
 						);
 						if (otherTokens > 10)
-							categories.push({ key: "other", value: otherTokens });
+							categories.push({
+								key: "other",
+								value: otherTokens,
+							});
 
 						categories.push({
 							key: "available",
 							value: Math.max(0, limit - reserveTokens - totalActual),
 						});
-						categories.push({ key: "autoCompact", value: reserveTokens });
+						categories.push({
+							key: "autoCompact",
+							value: reserveTokens,
+						});
 
 						const gridWidth = 10;
 						const gridHeight = 5;
 						const totalBlocks = gridWidth * gridHeight;
 
-						const blocks: { color: string; symbol: string }[] = [];
+						const blocks: {
+							color: string;
+							symbol: string;
+						}[] = [];
 						categories.forEach((cat) => {
 							const cfg = CATEGORY_CONFIG[cat.key];
 							let count = Math.round((cat.value / limit) * totalBlocks);
 							if (count === 0 && cat.value > 0) count = 1;
 							for (let i = 0; i < count && blocks.length < totalBlocks; i++) {
-								blocks.push({ color: cfg.color, symbol: `${cfg.symbol} ` });
+								blocks.push({
+									color: cfg.color,
+									symbol: `${cfg.symbol} `,
+								});
 							}
 						});
 
@@ -226,6 +260,54 @@ export default function (pi: ExtensionAPI) {
 							const left = (gridLines[i] || "").padEnd(leftSideWidth);
 							const right = allDetailLines[i] || "";
 							container.addChild(new Text(`    ${left}      ${right}`, 1, 0));
+						}
+
+						// Session token usage breakdown
+						if (sessionInput > 0 || sessionOutput > 0 || sessionCacheRead > 0) {
+							const totalIn = sessionInput + sessionCacheRead;
+							const cacheRate =
+								totalIn > 0
+									? ((sessionCacheRead / totalIn) * 100).toFixed(1)
+									: "0";
+
+							container.addChild(new Spacer(1));
+							container.addChild(
+								new Text(
+									theme.fg("accent", theme.bold(" Session Token Usage")),
+									1,
+									0,
+								),
+							);
+							container.addChild(
+								new Text(
+									`  ${theme.fg("dim", "Input".padEnd(12))} ${theme.fg("text", formatTokens(totalIn).padStart(8))}`,
+									1,
+									0,
+								),
+							);
+							container.addChild(
+								new Text(
+									`  ${theme.fg("dim", "  miss".padEnd(12))} ${theme.fg("text", formatTokens(sessionInput).padStart(8))}`,
+									1,
+									0,
+								),
+							);
+							if (sessionCacheRead > 0) {
+								container.addChild(
+									new Text(
+										`  ${theme.fg("dim", "  hit".padEnd(12))} ${theme.fg("accent", formatTokens(sessionCacheRead).padStart(8))} ${theme.fg("accent", `(${cacheRate}%)`)}`,
+										1,
+										0,
+									),
+								);
+							}
+							container.addChild(
+								new Text(
+									`  ${theme.fg("dim", "Output".padEnd(12))} ${theme.fg("text", formatTokens(sessionOutput).padStart(8))}`,
+									1,
+									0,
+								),
+							);
 						}
 					}
 

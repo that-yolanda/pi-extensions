@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync } from "node:fs";
 import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const PACKAGES = [
@@ -29,8 +29,13 @@ if (!PACKAGES.includes(dir)) {
 	process.exit(1);
 }
 
-if (!["patch", "minor", "major"].includes(bump) && !/^\d+\.\d+\.\d+/.test(bump)) {
-	console.error(`Invalid bump: ${bump}. Use patch, minor, major, or explicit version (e.g. 0.2.0)`);
+if (
+	!["patch", "minor", "major"].includes(bump) &&
+	!/^\d+\.\d+\.\d+/.test(bump)
+) {
+	console.error(
+		`Invalid bump: ${bump}. Use patch, minor, major, or explicit version (e.g. 0.2.0)`,
+	);
 	process.exit(1);
 }
 
@@ -39,7 +44,10 @@ const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
 const oldVersion = pkg.version;
 
 // Bump version
-execSync(`npm version ${bump} --no-git-tag-version`, { cwd: dir, stdio: "inherit" });
+execSync(`npm version ${bump} --no-git-tag-version`, {
+	cwd: dir,
+	stdio: "inherit",
+});
 const bumpedPkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
 const nextVersion = bumpedPkg.version;
 

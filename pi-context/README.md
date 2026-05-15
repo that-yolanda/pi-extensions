@@ -20,6 +20,7 @@ Uses a simple `length / 4` heuristic to estimate token counts. The raw estimates
 
 - **Token grid**: 10×5 block grid where each block represents a proportional share of the context window
 - **Category breakdown**: Shows system prompt, tool definitions, tool calls, messages, available space, and auto-compact reserve
+- **Session Token Usage**: Input tokens (miss + cache hit with rate), output tokens from the API `usage` field
 - **Colors**: Each category has a fixed color (`muted`, `warning`, `accent`, `dim`, `text`)
 
 ### Key functions
