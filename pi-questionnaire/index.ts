@@ -399,7 +399,8 @@ export default function questionnaire(pi: ExtensionAPI) {
 							if (opt.isOther) {
 								inputMode = true;
 								inputQuestionId = q.id;
-								editor.setText("");
+								const existing = answers.get(q.id);
+								editor.setText(existing?.wasCustom ? existing.label : "");
 								refresh();
 								return;
 							}
@@ -462,6 +463,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 									: null;
 							const customs =
 								isMultiSel && mq ? multiCustomInputs.get(mq.id) || [] : [];
+							const existingAnswer = mq ? answers.get(mq.id) : null;
 
 							for (let i = 0; i < opts.length; i++) {
 								const opt = opts[i];
@@ -473,7 +475,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 									const isChecked = isOther
 										? customs.length > 0
 										: toggled?.has(i);
-									const check = isChecked ? "☑" : "☐";
+									const check = isChecked ? "■" : "☐";
 									if (isOther && inputMode) {
 										add(prefix + theme.fg("accent", `${check} ${opt.label} ✎`));
 									} else {
@@ -490,12 +492,26 @@ export default function questionnaire(pi: ExtensionAPI) {
 									}
 								} else {
 									const color = focused ? "accent" : "text";
+									const isSelected =
+										!isOther &&
+										existingAnswer &&
+										!existingAnswer.wasCustom &&
+										existingAnswer.value === opt.value;
 									if (isOther && inputMode) {
 										add(
 											prefix + theme.fg("accent", `${i + 1}. ${opt.label} ✎`),
 										);
+									} else if (isOther && existingAnswer?.wasCustom) {
+										add(prefix + theme.fg(color, `${i + 1}. ${opt.label} ✓`));
+										add(
+											`     ${theme.fg("muted", `→ ${existingAnswer.label}`)}`,
+										);
 									} else {
-										add(prefix + theme.fg(color, `${i + 1}. ${opt.label}`));
+										const check = isSelected ? " ✓" : "";
+										add(
+											prefix +
+												theme.fg(color, `${i + 1}. ${opt.label}${check}`),
+										);
 									}
 								}
 								if (opt.description) {
