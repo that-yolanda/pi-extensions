@@ -8,9 +8,9 @@ type RGB = readonly [number, number, number];
 
 const C = {
 	fg0: [251, 241, 199] as RGB, // '#fbf1c7'
-	bg1: [151, 138, 128] as RGB, // '#978A80'
-	bg2: [102, 92, 84] as RGB, // '#665c54'
-	bg3: [60, 56, 54] as RGB, // '#3c3836'
+	fg1: [151, 138, 128] as RGB, // '#978A80'
+	bg1: [102, 92, 84] as RGB, // '#665c54'
+	bg2: [60, 56, 54] as RGB, // '#3c3836'
 	blue: [69, 133, 136] as RGB, // '#458588'
 	aqua: [104, 157, 106] as RGB, // '#689d6a'
 	green: [152, 151, 26] as RGB, // '#98971a'
@@ -20,11 +20,24 @@ const C = {
 	yellow: [215, 153, 33] as RGB, // '#d79921'
 };
 
-// Segment color sequence: orange → yellow → aqua → blue → bg2 → bg3
-const SEG_COLORS = [C.orange, C.yellow, C.aqua, C.blue, C.bg2, C.bg3] as const;
+// --- Theme configuration (color role mapping) ---
+const THEME = {
+	/** Text foreground inside capsules */
+	fg: C.fg0,
+	/** Line 1 segment color cycle */
+	line1: [C.orange, C.yellow, C.aqua, C.blue, C.bg1, C.bg2] as const,
+	/** Line 2 session consumption segment */
+	session: C.bg1,
+	/** Line 2 context bar background */
+	contextBar: C.bg2,
+	/** Context bar: used block color */
+	barUsed: C.bg1,
+	/** Context bar: free block color */
+	barFree: C.fg1,
+} as const;
 
-function segColor(idx: number): RGB {
-	return SEG_COLORS[idx % SEG_COLORS.length];
+function line1Color(idx: number): RGB {
+	return THEME.line1[idx % THEME.line1.length];
 }
 
 const R = "\x1b[0m";
@@ -48,7 +61,7 @@ function pillClose(c: RGB): string {
 }
 
 function pillBody(c: RGB, text: string): string {
-	return `${bg(c)}${fg(C.fg0)} ${text} ${R}`;
+	return `${bg(c)}${fg(THEME.fg)} ${text} ${R}`;
 }
 
 function pillArrow(prev: RGB, next: RGB): string {
@@ -76,7 +89,13 @@ function buildPill(segments: Segment[]): string {
 
 function shortenPath(cwd: string): string {
 	const home = process.env.HOME || "";
-	return home && cwd.startsWith(home) ? `~${cwd.slice(home.length)}` : cwd;
+	const p = home && cwd.startsWith(home) ? `~${cwd.slice(home.length)}` : cwd;
+	const segs = p.split("/").filter(Boolean);
+	if (segs.length > 3) {
+		const keep = segs.slice(-3).join("/");
+		return p.startsWith("~/") ? `~/.../${keep}` : `.../${keep}`;
+	}
+	return p;
 }
 
 function collectGitStats(cwd: string): { added: number; removed: number } {
@@ -104,7 +123,6 @@ function fmtTokens(n: number): string {
 	return `${n}`;
 }
 
-
 // --- State ---
 
 interface StatusState {
@@ -127,44 +145,39 @@ interface StatusState {
 // --- Render ---
 
 function buildLines(width: number, s: StatusState): string[] {
-	// Line 1: session info — orange / yellow / aqua / blue / bg2 / bg3
+	// Line 1: session info — orange / yellow / aqua / blue / bg1 / bg2
 	const line1Segs: Segment[] = [];
 	let ci = 0;
 
 	if (s.model) {
 		line1Segs.push({
-			bg: segColor(ci++),
+			bg: line1Color(ci++),
 			text: s.provider ? `❖ ${s.provider}/${s.model}` : `❖ ${s.model}`,
 		});
 	}
 	if (s.thinkingLevel) {
 		line1Segs.push({
-			bg: segColor(ci++),
-			text: ` ${s.thinkingLevel}`,
+			bg: line1Color(ci++),
+			text: `  ${s.thinkingLevel}`,
 		});
 	}
-	if (s.gitBranch) {
-		line1Segs.push({
-			bg: segColor(ci++),
-			text: ` ${s.gitBranch}`,
-		});
-	}
-	if (s.gitAdded > 0 || s.gitRemoved > 0) {
+	if (s.gitBranch || s.gitAdded > 0 || s.gitRemoved > 0) {
 		const parts: string[] = [];
-		if (s.gitAdded > 0) parts.push(`+ ${s.gitAdded}`);
-		if (s.gitRemoved > 0) parts.push(`- ${s.gitRemoved}`);
-		line1Segs.push({ bg: segColor(ci++), text: parts.join(" ") });
+		if (s.gitBranch) parts.push(` ${s.gitBranch}`);
+		if (s.gitAdded > 0) parts.push(`+${s.gitAdded}`);
+		if (s.gitRemoved > 0) parts.push(`-${s.gitRemoved}`);
+		line1Segs.push({ bg: line1Color(ci++), text: parts.join(" ") });
 	}
 	if (s.cwd) {
 		line1Segs.push({
-			bg: segColor(ci++),
+			bg: line1Color(ci++),
 			text: `  ${shortenPath(s.cwd)}`,
 		});
 	}
 
 	const line1 = truncateToWidth(buildPill(line1Segs), width) + R;
 
-	// Line 2: context + tokens — orange / yellow / aqua / blue
+	// Line 2: session consumption + context state
 	let line2: string;
 	if (s.contextPercent != null && s.contextWindow > 0) {
 		const pct = s.contextPercent;
@@ -176,40 +189,29 @@ function buildLines(width: number, s: StatusState): string[] {
 
 		const line2Segs: Segment[] = [];
 
-		// Segment 1 (orange): context window size
-		line2Segs.push({
-			bg: segColor(0),
-			text: `󰞕 ${fmtTokens(s.contextWindow)}`,
-		});
-
-		// Segment 2 (yellow): input breakdown
-		if (s.totalInput > 0 || s.totalCacheRead > 0) {
-			const totalIn = s.totalInput + s.totalCacheRead;
-			const cacheRate =
-				totalIn > 0 ? ((s.totalCacheRead / totalIn) * 100).toFixed(0) : "0";
+		// Segment 1 (orange): session token consumption
+		if (s.totalInput > 0 || s.totalOutput > 0 || s.totalCacheRead > 0) {
+			const totalInput = s.totalInput + s.totalCacheRead;
+			const hitRate =
+				totalInput > 0
+					? ((s.totalCacheRead / totalInput) * 100).toFixed(0)
+					: "0";
 			line2Segs.push({
-				bg: segColor(1),
-				text: `↑ ${fmtTokens(totalIn)} → ${fmtTokens(s.totalInput)} / ${fmtTokens(s.totalCacheRead)} ${cacheRate}%`,
+				bg: THEME.session,
+				text: ` in:${fmtTokens(s.totalInput)} out:${fmtTokens(s.totalOutput)} cached:${fmtTokens(s.totalCacheRead)} hit:${hitRate}%`,
 			});
 		}
 
-		// Segment 3 (aqua): output
-		if (s.totalOutput > 0) {
-			line2Segs.push({
-				bg: segColor(2),
-				text: `↓ ${fmtTokens(s.totalOutput)}`,
-			});
-		}
-
-		// Segment 4 (bg3): available bar + free %
+		// Segment 2: context bar + used / window + free %
+		const usedText = s.contextTokens != null ? fmtTokens(s.contextTokens) : "?";
 		line2Segs.push({
-			bg: C.bg3,
-			text: `${fg(C.bg2)}${"█".repeat(usedBlocks)}${fg(C.bg1)}${"░".repeat(freeBlocks)}${fg(C.fg0)} ${remain.toFixed(1)}% free`,
+			bg: THEME.contextBar,
+			text: `${fg(THEME.barUsed)}${"█".repeat(usedBlocks)}${fg(THEME.barFree)}${"░".repeat(freeBlocks)}${fg(THEME.fg)} ${usedText}/${fmtTokens(s.contextWindow)} free:${remain.toFixed(1)}%`,
 		});
 
 		line2 = truncateToWidth(buildPill(line2Segs), width) + R;
 	} else {
-		line2 = `${fg(C.bg3)}Context data not available yet${R}`;
+		line2 = `${fg(THEME.contextBar)}Context data not available yet${R}`;
 	}
 
 	return [line1, line2];
