@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 (2026-05-16)
+
+- Extract color roles into THEME config object for easier customization
+- Merge git branch and change stats into a single capsule segment
+- Consolidate token stats into one compact segment (in/out/cached/hit%)
+- Shorten long paths to last 3 segments with ~/.../ prefix
+- Update screenshot
+
 ## 0.2.1 (2026-05-15)
 
 - Use absolute GitHub raw URLs for images in README
