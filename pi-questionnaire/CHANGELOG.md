@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4 (2026-05-16)
+
+- Show ✓ indicator on previously selected option when revisiting answered questions
+- Display custom answer text (→ label) when revisiting "Type something" answers
+- Pre-populate editor with existing custom answer when re-entering input mode
+
 ## 0.1.3 (2026-05-15)
 
 - Add `bugs` field to package.json
