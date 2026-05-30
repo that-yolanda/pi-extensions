@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 (2026-05-30)
+
+- Add `promptSnippet` and `promptGuidelines` to tool registration for system prompt integration
+
 ## 0.1.4 (2026-05-16)
 
 - Show ✓ indicator on previously selected option when revisiting answered questions

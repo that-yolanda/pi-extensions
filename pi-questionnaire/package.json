@@ -1,6 +1,6 @@
 {
 	"name": "@that-yolanda/pi-questionnaire",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "Interactive single/multi-question UI tool for PI coding agent.",
 	"type": "module",
 	"license": "MIT",

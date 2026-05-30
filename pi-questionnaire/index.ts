@@ -107,6 +107,11 @@ export default function questionnaire(pi: ExtensionAPI) {
 		label: "Questionnaire",
 		description:
 			"Ask the user one or more questions. Use for clarifying requirements, getting preferences, or confirming decisions. For single questions, shows a simple option list. For multiple questions, shows a tab-based interface.",
+		promptSnippet:
+			"Ask the user structured single/multi-choice questions via interactive TUI",
+		promptGuidelines: [
+			"Use questionnaire when you need to clarify requirements, gather preferences, or confirm decisions with the user interactively.",
+		],
 		parameters: QuestionnaireParams,
 
 		async execute(_toolCallId, params, _signal, _onUpdate, ctx) {

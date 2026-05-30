@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.4 (2026-05-30)
+
+- Add `promptSnippet` to all five tool registrations for system prompt integration
+- Add `promptGuidelines` to honcho_search, honcho_context, and honcho_conclude to guide LLM usage
+
 ## 0.4.3 (2026-05-15)
 
 - Add `bugs` field to package.json

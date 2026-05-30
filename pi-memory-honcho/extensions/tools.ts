@@ -75,6 +75,7 @@ export const registerTools = (pi: ExtensionAPI): void => {
 		label: "Honcho Profile",
 		description:
 			"Retrieve what Honcho currently knows about the user profile from this and linked workspaces.",
+		promptSnippet: "Retrieve what Honcho knows about the user profile",
 		parameters: Type.Object({}),
 		async execute(_toolCallId, _params, _signal, _onUpdate, _ctx) {
 			const handles = await ensureHandles();
@@ -114,6 +115,11 @@ export const registerTools = (pi: ExtensionAPI): void => {
 		label: "Honcho Search",
 		description:
 			"Search durable memory for prior conversations, facts, and decisions across all linked workspaces.",
+		promptSnippet:
+			"Search durable memory for prior conversations, facts, and decisions",
+		promptGuidelines: [
+			"Use honcho_search before answering when prior conversations or user preferences may be relevant.",
+		],
 		parameters: Type.Object({
 			query: Type.String({ description: "Search query" }),
 		}),
@@ -181,6 +187,10 @@ export const registerTools = (pi: ExtensionAPI): void => {
 		label: "Honcho Context",
 		description:
 			"Ask Honcho to synthesize memory context for the current question across all linked workspaces.",
+		promptSnippet: "Synthesize memory context relevant to the current question",
+		promptGuidelines: [
+			"Use honcho_context when you need deeper reasoning about past interactions for the current question.",
+		],
 		parameters: Type.Object({
 			query: Type.String({
 				description: "Question to ask about long-term memory",
@@ -260,6 +270,10 @@ export const registerTools = (pi: ExtensionAPI): void => {
 		name: "honcho_conclude",
 		label: "Honcho Conclude",
 		description: "Store a durable preference, fact, or decision in Honcho.",
+		promptSnippet: "Store a durable preference, fact, or decision in memory",
+		promptGuidelines: [
+			"Use honcho_conclude to persist important user preferences, decisions, or facts that should carry across sessions.",
+		],
 		parameters: Type.Object({
 			content: Type.String({ description: "Durable memory to store" }),
 		}),
@@ -284,6 +298,7 @@ export const registerTools = (pi: ExtensionAPI): void => {
 		name: "honcho_seed_identity",
 		label: "Honcho Seed Identity",
 		description: "Seed the AI peer's identity representation in Honcho.",
+		promptSnippet: "Seed the AI peer identity representation in Honcho",
 		parameters: Type.Object({
 			content: Type.String({ description: "AI identity description" }),
 		}),
