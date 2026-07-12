@@ -201,6 +201,7 @@ export const registerTools = (pi: ExtensionAPI): void => {
 		}),
 		async execute(_toolCallId, params, _signal, _onUpdate, _ctx) {
 			const handles = await ensureHandles();
+			const session = await ensureSession(handles);
 			const truncatedQuery = params.query.slice(
 				0,
 				handles.config.dialecticMaxInputChars,
